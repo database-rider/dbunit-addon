@@ -52,6 +52,15 @@ public class DBUnitSetupCommand extends AbstractUICommand {
 
     @Override
     public void initializeUI(UIBuilder builder) throws Exception {
+        if (dbunitConfiguration.getUrl() != null) {
+            url.setValue(dbunitConfiguration.getUrl());
+        }
+        if (dbunitConfiguration.getUser() != null) {
+            user.setValue(dbunitConfiguration.getUser());
+        }
+        if (dbunitConfiguration.getPassword() != null) {
+            password.setValue(dbunitConfiguration.getPassword());
+        }
         builder.add(url).add(user).add(password);
     }
 
@@ -59,8 +68,7 @@ public class DBUnitSetupCommand extends AbstractUICommand {
     @Override
     public Result execute(UIExecutionContext context) throws Exception {
         try {
-            dbunitConfiguration.set(url.getValue(), user.getValue(), password.getValue())
-            .testConnection();
+            dbunitConfiguration.set(url.getValue(), user.getValue(), password.getValue());
         } catch (Exception e) {
             return Results.fail(e.getMessage());
         }

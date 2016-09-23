@@ -1,12 +1,16 @@
 package com.github.database.rider.addon.config;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import javax.inject.Singleton;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by pestano on 21/09/16.
  */
+@Singleton
 public class DBUnitConfiguration {
 
     private String url;
@@ -17,17 +21,28 @@ public class DBUnitConfiguration {
 
     private String driverClass;
 
+    private List<String> tableNames;
+
+    private Connection connection;
+
     public DBUnitConfiguration set(String url, String user, String password) {
         this.url = url;
         this.user = user;
         this.password = password;
-        if(password == null){
-            password = "";
+        if (password == null) {
+            this.password = "";
         }
         driverClass = resolveDriverClass();
+        try {
+            if(connection != null && !connection.isClosed()){
+                connection.close();
+            }
+            connection = createConnection();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         return this;
     }
-
 
 
     public String getUrl() {
@@ -54,7 +69,7 @@ public class DBUnitConfiguration {
         } catch (Exception e) {
             try {
                 name = DriverManager.getDriver(url).getClass().getName();
-            }catch (Exception ex){
+            } catch (Exception ex) {
             }
         }
         return name;
@@ -65,25 +80,53 @@ public class DBUnitConfiguration {
         return "Url: " + url + ", User: " + user + ", Driver class: " + driverClass;
     }
 
-    public void testConnection() {
-        Connection connection = null;
-        try {
-            if(driverClass != null && !"".equals(driverClass)){
-                Class.forName(driverClass);
-            }
-            connection = DriverManager.getConnection(url,user,password);
-            connection.isValid(6);
-        } catch (Exception e) {
-           throw new RuntimeException("Could not acquire jdbc connection for current configuration: "+toString() +". "+e.getMessage() +" - "+e.getCause(),e);
-        } finally {
-            if(connection != null){
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
+
+    public List<String> getTableNames(Connection connection) {
+        if (tableNames == null) {
+            tableNames = new ArrayList<String>();
+
+            ResultSet result = null;
+            try {
+                DatabaseMetaData metaData = connection.getMetaData();
+
+                result = metaData.getTables(null, null, "%", new String[]{"TABLE"});
+
+                while (result.next()) {
+                    String schema = resolveSchema(result);
+                    String name = result.getString("TABLE_NAME");
+                    tableNames.add(schema != null ? schema + "." + name : name);
                 }
+            } catch (SQLException ex) {
+                Logger.getLogger(getClass().getName()).log(Level.WARNING, "An exception occured while trying get table names.", ex);
             }
         }
+        return tableNames;
+    }
 
+    private String resolveSchema(ResultSet result) {
+        try {
+            return result.getString("TABLE_SCHEMA");
+        } catch (Exception e) {
+
+        }
+        return null;
+    }
+
+    public Connection createConnection() throws SQLException, ClassNotFoundException {
+        if (driverClass != null && !"".equals(driverClass)) {
+            Class.forName(driverClass);
+        }
+        return DriverManager.getConnection(url, user, password);
+    }
+
+    public Connection getConnection() {
+        if(connection == null){
+            try {
+                connection = createConnection();
+            } catch (Exception e) {
+                throw new RuntimeException("Could not create connection using current configuration "+toString());
+            }
+        }
+        return connection;
     }
 }
