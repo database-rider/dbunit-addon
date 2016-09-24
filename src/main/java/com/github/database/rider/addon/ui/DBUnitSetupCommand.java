@@ -17,6 +17,8 @@ import org.jboss.forge.addon.ui.util.Metadata;
 
 import javax.inject.Inject;
 
+import static com.github.database.rider.core.util.EntityManagerProvider.em;
+
 /**
  * DBUnit: Setup command
  *

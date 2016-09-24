@@ -39,7 +39,7 @@ public class DBUnitConfiguration {
             }
             connection = createConnection();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Could get connection using current configuration, use 'DBUnit Setup' to configure JDBC connection. Error: "+e.getMessage());
         }
         return this;
     }
@@ -124,7 +124,7 @@ public class DBUnitConfiguration {
             try {
                 connection = createConnection();
             } catch (Exception e) {
-                throw new RuntimeException("Could not create connection using current configuration "+toString());
+                throw new RuntimeException("Could get connection using current configuration, use 'DBUnit Setup' to configure JDBC connection. Error: "+e.getMessage());
             }
         }
         return connection;

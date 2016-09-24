@@ -1,0 +1,18 @@
+TWEET:
+  - ID: "5d00f486-5ff7-427e-b038-746de7ecd26f"
+    CONTENT: "tweet 2"
+    DATE: "2016-09-23 23:17:51.638"
+    LIKES: 0
+    USER_ID: 
+  - ID: "73bcbb87-3233-49e8-92b6-b2e92a5f7b69"
+    CONTENT: "tweet 1"
+    DATE: "2016-09-23 23:17:51.638"
+    LIKES: 10
+    USER_ID: 
+
+USER:
+  - ID: 1
+    NAME: "rmpestano"
+  - ID: 2
+    NAME: "user2"
+

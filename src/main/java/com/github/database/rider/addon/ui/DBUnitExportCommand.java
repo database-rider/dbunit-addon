@@ -4,7 +4,6 @@ import com.github.database.rider.addon.config.DBUnitConfiguration;
 import com.github.database.rider.core.api.dataset.DataSetFormat;
 import com.github.database.rider.core.api.expoter.DataSetExportConfig;
 import com.github.database.rider.core.exporter.DataSetExporter;
-import org.dbunit.database.DatabaseConnection;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
@@ -13,7 +12,10 @@ import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.hints.InputType;
-import org.jboss.forge.addon.ui.input.*;
+import org.jboss.forge.addon.ui.input.UIInput;
+import org.jboss.forge.addon.ui.input.UISelectMany;
+import org.jboss.forge.addon.ui.input.UISelectOne;
+import org.jboss.forge.addon.ui.input.ValueChangeListener;
 import org.jboss.forge.addon.ui.input.events.ValueChangeEvent;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
@@ -24,7 +26,6 @@ import org.jboss.forge.addon.ui.util.Metadata;
 
 import javax.inject.Inject;
 import java.io.File;
-import java.nio.file.Paths;
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -87,17 +88,23 @@ public class DBUnitExportCommand extends AbstractUICommand {
             outputDir.setDefaultValue(resourceFactory.create(DirectoryResource.class, new File(System.getProperty("user.home") + "/generated-datasets").getAbsoluteFile()));
         }
 
-        outputDir.addValueChangeListener(new ValueChangeListener() {
-            @Override
-            public void valueChanged(ValueChangeEvent valueChangeEvent) {
-                if (valueChangeEvent.getNewValue() != null) {
-                    lastSelectedDir = (DirectoryResource) valueChangeEvent.getNewValue();
-                }
+        outputDir.addValueChangeListener(valueChangeEvent -> {
+            if (valueChangeEvent.getNewValue() != null) {
+                lastSelectedDir = (DirectoryResource) valueChangeEvent.getNewValue();
             }
         });
         builder.add(outputDir);
 
-        name.setValue("dataset-"+sdf.format(new Date()));
+        name.setValue("dataset-"+sdf.format(new Date()).replaceAll(":","")+"."+format.getValue().toString().toLowerCase());
+
+        format.addValueChangeListener(valueChangeEvent -> {
+            String newName = name.getValue().substring(0, name.getValue().
+                    contains(".") ? name.getValue().lastIndexOf(".") : name.getValue().length());
+
+            name.setValue(newName + "." + valueChangeEvent.getNewValue().toString().toLowerCase());
+        });
+
+
         builder.add(name);
     }
 
@@ -138,7 +145,6 @@ public class DBUnitExportCommand extends AbstractUICommand {
                 dataSetExportConfig.includeTables(includes.toArray(new String[includes.size()]));
             }
 
-            connection = dbunitConfiguration.createConnection();
             DataSetExporter.getInstance().export(connection, dataSetExportConfig);
 
         } catch (Exception e) {
