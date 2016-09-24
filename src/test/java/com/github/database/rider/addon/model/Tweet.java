@@ -1,6 +1,5 @@
 package com.github.database.rider.addon.model;
 
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Calendar;
@@ -12,8 +11,7 @@ import java.util.Calendar;
 public class Tweet {
 
     @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid2")
+    @GeneratedValue
     private String id;
 
     private String content;

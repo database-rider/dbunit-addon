@@ -70,7 +70,7 @@ public class DBUnitExportCommandTest {
     @Test
     public void shouldExportYMLDataset() throws Exception {
         shellTest.clearScreen();
-        Result result = shellTest.execute("dbunit-setup --url 'jdbc:h2:./target/h2db;AUTO_SERVER=TRUE'",
+        Result result = shellTest.execute("dbunit-setup --url 'jdbc:hsqldb:mem:test;DB_CLOSE_DELAY=-1' --user sa",
                 10, TimeUnit.SECONDS);
         assertThat(result, not(instanceOf(Failed.class)));
         assertThat(result.getMessage(),

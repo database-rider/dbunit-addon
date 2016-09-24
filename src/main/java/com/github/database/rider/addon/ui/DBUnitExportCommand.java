@@ -30,6 +30,8 @@ import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static com.github.database.rider.core.util.EntityManagerProvider.em;
+
 /**
  * DBUnit: Export command
  *
@@ -78,7 +80,9 @@ public class DBUnitExportCommand extends AbstractUICommand {
         format.setDefaultValue(DataSetFormat.YML);
         format.setValueChoices(Arrays.asList(DataSetFormat.values()));
         includeTables.setValue(new ArrayList<String>());
-        includeTables.setValueChoices(dbunitConfiguration.getTableNames(dbunitConfiguration.getConnection()));
+        if(dbunitConfiguration.getConnection() != null){
+            includeTables.setValueChoices(dbunitConfiguration.getTableNames(dbunitConfiguration.getConnection()));
+        }
 
         builder.add(format).add(includeTables);
 

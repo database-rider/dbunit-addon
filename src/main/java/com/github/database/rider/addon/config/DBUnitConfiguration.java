@@ -120,13 +120,6 @@ public class DBUnitConfiguration {
     }
 
     public Connection getConnection() {
-        if(connection == null){
-            try {
-                connection = createConnection();
-            } catch (Exception e) {
-                throw new RuntimeException("Could get connection using current configuration, use 'DBUnit Setup' to configure JDBC connection. Error: "+e.getMessage());
-            }
-        }
         return connection;
     }
 }
