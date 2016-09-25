@@ -18,7 +18,7 @@ public class Tweet {
 
     private Integer likes;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     private Calendar date;
 
     @ManyToOne

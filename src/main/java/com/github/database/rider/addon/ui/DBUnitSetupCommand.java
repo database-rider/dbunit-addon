@@ -1,6 +1,7 @@
 package com.github.database.rider.addon.ui;
 
 import com.github.database.rider.addon.config.DBUnitConfiguration;
+import com.github.database.rider.addon.event.ConnectionChangeEvent;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.ui.command.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
@@ -15,6 +16,7 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import static com.github.database.rider.core.util.EntityManagerProvider.em;
@@ -29,6 +31,8 @@ public class DBUnitSetupCommand extends AbstractUICommand {
     @Inject
     private FacetFactory facetFactory;
 
+    @Inject
+    private Event<ConnectionChangeEvent> connectionChangeEvent;
 
     @Inject
     DBUnitConfiguration dbunitConfiguration;
@@ -71,6 +75,7 @@ public class DBUnitSetupCommand extends AbstractUICommand {
     public Result execute(UIExecutionContext context) throws Exception {
         try {
             dbunitConfiguration.set(url.getValue(), user.getValue(), password.getValue());
+            connectionChangeEvent.fire(new ConnectionChangeEvent());
         } catch (Exception e) {
             return Results.fail(e.getMessage());
         }

@@ -1,6 +1,6 @@
 package com.github.database.rider.addon.config;
 
-import javax.inject.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 /**
  * Created by pestano on 21/09/16.
  */
-@Singleton
+@ApplicationScoped
 public class DBUnitConfiguration {
 
     private String url;
@@ -38,6 +38,7 @@ public class DBUnitConfiguration {
                 connection.close();
             }
             connection = createConnection();
+            tableNames = null;
         } catch (Exception e) {
             throw new RuntimeException("Could get connection using current configuration, use 'DBUnit Setup' to configure JDBC connection. Error: "+e.getMessage());
         }
@@ -92,9 +93,8 @@ public class DBUnitConfiguration {
                 result = metaData.getTables(null, null, "%", new String[]{"TABLE"});
 
                 while (result.next()) {
-                    String schema = resolveSchema(result);
                     String name = result.getString("TABLE_NAME");
-                    tableNames.add(schema != null ? schema + "." + name : name);
+                    tableNames.add(name);
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(getClass().getName()).log(Level.WARNING, "An exception occured while trying get table names.", ex);
@@ -122,4 +122,6 @@ public class DBUnitConfiguration {
     public Connection getConnection() {
         return connection;
     }
+
+
 }

@@ -13,10 +13,9 @@ import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInput;
+import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.input.UISelectOne;
-import org.jboss.forge.addon.ui.input.ValueChangeListener;
-import org.jboss.forge.addon.ui.input.events.ValueChangeEvent;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
@@ -29,8 +28,6 @@ import java.io.File;
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.*;
-
-import static com.github.database.rider.core.util.EntityManagerProvider.em;
 
 /**
  * DBUnit: Export command
@@ -61,6 +58,14 @@ public class DBUnitExportCommand extends AbstractUICommand {
     private UISelectMany<String> includeTables;
 
     @Inject
+    @WithAttributes(label = "Dependent tables", description = "Brings dependent tables. Works in conjunction with 'includeTables'. Default is true")
+    private UIInput<Boolean> dependentTables;
+
+    @Inject
+    @WithAttributes(label = "Query list", description = "List of SQL queries which resulting rows will be included in generated dataset.")
+    private UIInputMany<String> queryList;
+
+    @Inject
     @WithAttributes(label = "Output dir", description = "Output directory to generate datasets. Defaults to 'user.home/generated-datasets' dir")
     private UIInput<DirectoryResource> outputDir;
 
@@ -79,18 +84,23 @@ public class DBUnitExportCommand extends AbstractUICommand {
     public void initializeUI(UIBuilder builder) throws Exception {
         format.setDefaultValue(DataSetFormat.YML);
         format.setValueChoices(Arrays.asList(DataSetFormat.values()));
-        includeTables.setValue(new ArrayList<String>());
+        //includeTables.setValue(new ArrayList<String>());
+
         if(dbunitConfiguration.getConnection() != null){
             includeTables.setValueChoices(dbunitConfiguration.getTableNames(dbunitConfiguration.getConnection()));
         }
 
-        builder.add(format).add(includeTables);
+        dependentTables.setDefaultValue(Boolean.TRUE);
+
+        builder.add(format).add(includeTables).add(dependentTables).add(queryList);
 
         if (lastSelectedDir != null) {
             outputDir.setDefaultValue(lastSelectedDir);
         } else{
             outputDir.setDefaultValue(resourceFactory.create(DirectoryResource.class, new File(System.getProperty("user.home") + "/generated-datasets").getAbsoluteFile()));
         }
+
+
 
         outputDir.addValueChangeListener(valueChangeEvent -> {
             if (valueChangeEvent.getNewValue() != null) {
@@ -138,7 +148,18 @@ public class DBUnitExportCommand extends AbstractUICommand {
 
             DataSetExportConfig dataSetExportConfig = new DataSetExportConfig().
                         dataSetFormat(format.getValue()).
-                        outputFileName(output.toString());
+                    dependentTables(dependentTables.getValue()).
+                    outputFileName(output.toString());
+
+
+            Iterator<String> queryIterator = queryList.getValue().iterator();
+            if(queryIterator.hasNext()){
+                Set<String> queryList = new HashSet<>();
+                while(queryIterator.hasNext()){
+                    queryList.add(queryIterator.next());
+                }
+                dataSetExportConfig.queryList(queryList.toArray(new String[queryList.size()]));
+            }
 
             Iterator<String> iterator = includeTables.getValue().iterator();
             if (iterator.hasNext()){
@@ -162,5 +183,6 @@ public class DBUnitExportCommand extends AbstractUICommand {
         return Results.success("DataSet exported successfully at "+ output.toString());
 
     }
+
 
 }
