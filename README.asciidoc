@@ -18,8 +18,11 @@ addon-install-from-git --url https://github.com/database-rider/dbunit-addon.git
 === Usage
 
 . Setup database connection
-
++
+image::setup_cmd.png["Setup command"]
 . Export database tables into *YAML*, *JSON*, *XML*, *XLS* and *CSV* datasets.
++
+image::export_cmd.png["Export command"]
 
 === Export configuration
 
