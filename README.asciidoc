@@ -4,7 +4,7 @@ Exports DBUnit datasets based on a database connection.
 
 This addon brings https://github.com/database-rider/database-rider#export-datasets[Database rider exporter^] to your IDE via JBoss Forge.
 
-image:https://travis-ci.org/dataset-rider/dbunit-addon.svg[Build Status (Travis CI), link=https://travis-ci.org/dataset-rider/dbunit-addon]
+image:https://travis-ci.org/database-rider/dbunit-addon.svg[Build Status (Travis CI), link=https://travis-ci.org/dataset-rider/dbunit-addon]
 
 === Installation
 
@@ -22,11 +22,12 @@ addon-install-from-git --url https://github.com/database-rider/dbunit-addon.git
 
 === Export configuration
 
-* Format: Dataset format.
-* Include tables: Name of tables to include in generated dataset. If empty all tables will be exported.
-* Dependent tables: If true will bring dependent included tables. Works in conjunction with `includeTables`.
-* Query list: A list of SQL statements which resulting rows will be used in generated dataset.
-* Output dir: directory to generate dataset.
-* Name: name of resulting dataset. Format can be ommited in dataset name.
+* `Format`: Dataset format.
+* `Include tables`: Name of tables to include in generated dataset. If empty all tables will be exported.
+* `Dependent tables`: If true will bring dependent included tables. Works in conjunction with `includeTables`.
+* `Query list`: A list of SQL statements which resulting rows will be used in generated dataset.
+* `Output dir`: directory to generate dataset.
+* `Name`: name of resulting dataset. Format can be ommited in dataset name.
 
 === Demo
+TODO 
