@@ -3,6 +3,7 @@ package com.github.database.rider.addon.config;
 import javax.enterprise.context.ApplicationScoped;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,6 +36,7 @@ public class DBUnitConfiguration {
 		try {
 			connection = createConnection();
 			tableNames = resolveTableNames(connection);
+			Collections.sort(tableNames);
 		} catch (Exception e) {
 			throw new RuntimeException(
 					"Could get connection using current configuration, use 'DBUnit Setup' to configure JDBC connection. Error: "
