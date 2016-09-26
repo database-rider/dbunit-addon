@@ -88,10 +88,7 @@ public class DBUnitExportCommand extends AbstractUICommand {
         format.setValueChoices(Arrays.asList(DataSetFormat.values()));
         //includeTables.setValue(new ArrayList<String>());
 
-        List<String> test = new ArrayList<>();
-        test.add("Table one");
-        test.add("Table two");
-        includeTables.setValueChoices(test);
+        includeTables.setValueChoices(dbunitConfiguration.getTableNames());
 
         dependentTables.setDefaultValue(Boolean.TRUE);
 
@@ -185,10 +182,6 @@ public class DBUnitExportCommand extends AbstractUICommand {
 
         return Results.success("DataSet exported successfully at "+ output.toString());
 
-    }
-
-    public void onConnectionChange(@Observes ConnectionChangeEvent evt){
-    	//includeTables.setValueChoices(dbunitConfiguration.getTableNames());
     }
 
 }
