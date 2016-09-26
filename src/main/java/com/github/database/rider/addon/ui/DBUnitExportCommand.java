@@ -1,6 +1,7 @@
 package com.github.database.rider.addon.ui;
 
 import com.github.database.rider.addon.config.DBUnitConfiguration;
+import com.github.database.rider.addon.event.ConnectionChangeEvent;
 import com.github.database.rider.core.api.dataset.DataSetFormat;
 import com.github.database.rider.core.api.expoter.DataSetExportConfig;
 import com.github.database.rider.core.exporter.DataSetExporter;
@@ -23,6 +24,7 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import java.io.File;
 import java.sql.Connection;
@@ -86,9 +88,10 @@ public class DBUnitExportCommand extends AbstractUICommand {
         format.setValueChoices(Arrays.asList(DataSetFormat.values()));
         //includeTables.setValue(new ArrayList<String>());
 
-        if(dbunitConfiguration.getConnection() != null){
-            includeTables.setValueChoices(dbunitConfiguration.getTableNames(dbunitConfiguration.getConnection()));
-        }
+        List<String> test = new ArrayList<>();
+        test.add("Table one");
+        test.add("Table two");
+        includeTables.setValueChoices(test);
 
         dependentTables.setDefaultValue(Boolean.TRUE);
 
@@ -128,7 +131,7 @@ public class DBUnitExportCommand extends AbstractUICommand {
         Connection connection = null;
         StringBuilder output = new StringBuilder();
         try {
-            connection = dbunitConfiguration.getConnection();
+            connection = dbunitConfiguration.createConnection();
             DirectoryResource selectedDir = outputDir.getValue();
             if(selectedDir != null){
                 output.append(selectedDir.getFullyQualifiedName());
@@ -184,5 +187,8 @@ public class DBUnitExportCommand extends AbstractUICommand {
 
     }
 
+    public void onConnectionChange(@Observes ConnectionChangeEvent evt){
+    	//includeTables.setValueChoices(dbunitConfiguration.getTableNames());
+    }
 
 }

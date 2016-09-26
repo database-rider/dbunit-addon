@@ -13,115 +13,116 @@ import java.util.logging.Logger;
 @ApplicationScoped
 public class DBUnitConfiguration {
 
-    private String url;
+	private String url;
 
-    private String user;
+	private String user;
 
-    private String password = "";
+	private String password = "";
 
-    private String driverClass;
+	private String driverClass;
 
-    private List<String> tableNames;
+	private List<String> tableNames;
 
-    private Connection connection;
+	public DBUnitConfiguration set(String url, String user, String password) {
+		this.url = url;
+		this.user = user;
+		this.password = password;
+		if (password == null) {
+			this.password = "";
+		}
+		driverClass = resolveDriverClass();
+		Connection connection = null;
+		try {
+			connection = createConnection();
+			tableNames = resolveTableNames(connection);
+		} catch (Exception e) {
+			throw new RuntimeException(
+					"Could get connection using current configuration, use 'DBUnit Setup' to configure JDBC connection. Error: "
+							+ e.getMessage());
+		} finally {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return this;
+	}
 
-    public DBUnitConfiguration set(String url, String user, String password) {
-        this.url = url;
-        this.user = user;
-        this.password = password;
-        if (password == null) {
-            this.password = "";
-        }
-        driverClass = resolveDriverClass();
-        try {
-            if(connection != null && !connection.isClosed()){
-                connection.close();
-            }
-            connection = createConnection();
-            tableNames = null;
-        } catch (Exception e) {
-            throw new RuntimeException("Could get connection using current configuration, use 'DBUnit Setup' to configure JDBC connection. Error: "+e.getMessage());
-        }
-        return this;
-    }
+	public String getUrl() {
+		return url;
+	}
 
+	public String getUser() {
+		return user;
+	}
 
-    public String getUrl() {
-        return url;
-    }
+	public String getPassword() {
+		return password;
+	}
 
-    public String getUser() {
-        return user;
-    }
+	public String getDriverClass() {
+		return driverClass;
+	}
 
-    public String getPassword() {
-        return password;
-    }
+	private String resolveDriverClass() {
+		String name = "";
+		try {
+			name = DriverManager.getDriver(url).getClass().getName();
+			return name;
+		} catch (Exception e) {
+			try {
+				//yea it needs to be called twice! 
+				name = DriverManager.getDriver(url).getClass().getName();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				Logger.getLogger(getClass().getName()).log(Level.WARNING,
+						"An exception occured while trying get table names.", ex);
+				
+			}
+		}
+		return name;
+	}
 
-    public String getDriverClass() {
-        return driverClass;
-    }
+	@Override
+	public String toString() {
+		return "Url: " + url + ", User: " + user + ", Driver class: " + driverClass;
+	}
 
-    private String resolveDriverClass() {
-        String name = "";
-        try {
-            name = DriverManager.getDriver(url).getClass().getName();
-            return name;
-        } catch (Exception e) {
-            try {
-                name = DriverManager.getDriver(url).getClass().getName();
-            } catch (Exception ex) {
-            }
-        }
-        return name;
-    }
+	public List<String> resolveTableNames(Connection connection) {
+		List<String> tableNames = new ArrayList<String>();
 
-    @Override
-    public String toString() {
-        return "Url: " + url + ", User: " + user + ", Driver class: " + driverClass;
-    }
+		ResultSet result = null;
+		try {
+			DatabaseMetaData metaData = connection.getMetaData();
 
+			result = metaData.getTables(null, null, "%", new String[] { "TABLE" });
 
-    public List<String> getTableNames(Connection connection) {
-        if (tableNames == null) {
-            tableNames = new ArrayList<String>();
+			while (result.next()) {
+				String name = result.getString("TABLE_NAME");
+				tableNames.add(name);
+			}
+		} catch (SQLException ex) {
+			Logger.getLogger(getClass().getName()).log(Level.WARNING,
+					"An exception occured while trying get table names.", ex);
+		}
+		return tableNames;
+	}
 
-            ResultSet result = null;
-            try {
-                DatabaseMetaData metaData = connection.getMetaData();
+	public List<String> getTableNames() {
+		return tableNames;
+	}
 
-                result = metaData.getTables(null, null, "%", new String[]{"TABLE"});
-
-                while (result.next()) {
-                    String name = result.getString("TABLE_NAME");
-                    tableNames.add(name);
-                }
-            } catch (SQLException ex) {
-                Logger.getLogger(getClass().getName()).log(Level.WARNING, "An exception occured while trying get table names.", ex);
-            }
-        }
-        return tableNames;
-    }
-
-    private String resolveSchema(ResultSet result) {
-        try {
-            return result.getString("TABLE_SCHEMA");
-        } catch (Exception e) {
-
-        }
-        return null;
-    }
-
-    public Connection createConnection() throws SQLException, ClassNotFoundException {
-        if (driverClass != null && !"".equals(driverClass)) {
-            Class.forName(driverClass);
-        }
-        return DriverManager.getConnection(url, user, password);
-    }
-
-    public Connection getConnection() {
-        return connection;
-    }
-
+	public Connection createConnection() throws SQLException, ClassNotFoundException {
+		if (driverClass != null && !"".equals(driverClass)) {
+			Class.forName(driverClass);
+		}
+		if(url == null || "".equals(url.trim())){
+			throw new RuntimeException("Use the 'setup' command to provide a valid database URL in order to use to plugin.");
+		}
+		return DriverManager.getConnection(url, user, password);
+	}
 
 }

@@ -51,6 +51,6 @@ public class DBUnitSetupCommandTest {
                 10, TimeUnit.SECONDS);
         assertThat(result, is(instanceOf(Failed.class)));
         assertThat(result.getMessage(),
-                is(equalTo("Could not acquire jdbc connection for current configuration: Url: jdbc:xyz:mem:sd;DB_CLOSE_DELAY=-1, User: sa, Driver class: . No suitable driver found for jdbc:xyz:mem:sd;DB_CLOSE_DELAY=-1")));
+                is(equalTo("Could get connection using current configuration, use 'DBUnit Setup' to configure JDBC connection. Error: No suitable driver found for jdbc:xyz:mem:sd;DB_CLOSE_DELAY=-1")));
     }
 }

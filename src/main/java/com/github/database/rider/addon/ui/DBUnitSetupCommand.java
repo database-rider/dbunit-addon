@@ -29,9 +29,6 @@ import static com.github.database.rider.core.util.EntityManagerProvider.em;
 public class DBUnitSetupCommand extends AbstractUICommand {
 
     @Inject
-    private FacetFactory facetFactory;
-
-    @Inject
     private Event<ConnectionChangeEvent> connectionChangeEvent;
 
     @Inject

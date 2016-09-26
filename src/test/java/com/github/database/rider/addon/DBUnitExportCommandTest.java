@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import static com.github.database.rider.core.util.EntityManagerProvider.em;
 import static com.github.database.rider.core.util.EntityManagerProvider.tx;
@@ -87,6 +88,15 @@ public class DBUnitExportCommandTest {
         tx().commit();
     }
 
+    
+    @Test
+    public void shouldNotExportDatasetsWithoutDatabaseUrl() throws TimeoutException {
+    	Result result  = shellTest.execute("dbunit-export --name test",
+                20, TimeUnit.SECONDS);
+
+        assertThat(result.getMessage(),
+                containsString("Use the 'setup' command to provide a valid database URL in order to use to plugin."));
+    }
 
     @Test
     public void shouldExportYMLDataset() throws Exception {
