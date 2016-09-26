@@ -39,7 +39,7 @@ public class DBUnitConfiguration {
 			Collections.sort(tableNames);
 		} catch (Exception e) {
 			throw new RuntimeException(
-					"Could get connection using current configuration, use 'DBUnit Setup' to configure JDBC connection. Error: "
+					"Could not get connection using current configuration, use 'DBUnit Setup' to configure JDBC connection. Error: "
 							+ e.getMessage());
 		} finally {
 			if (connection != null) {
