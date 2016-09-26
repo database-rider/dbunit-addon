@@ -5,6 +5,7 @@ Exports DBUnit datasets based on a database connection.
 This addon brings https://github.com/database-rider/database-rider#export-datasets[Database rider exporter^] to your IDE via JBoss Forge.
 
 image:https://travis-ci.org/database-rider/dbunit-addon.svg[Build Status (Travis CI), link=https://travis-ci.org/dataset-rider/dbunit-addon]
+image:https://coveralls.io/repos/database-rider/dbunit-addon/badge.svg?branch=master&service=github[Coverage, link=https://coveralls.io/r/database-rider/dbunit-addon] 
 
 === Installation
 

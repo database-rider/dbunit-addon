@@ -1,5 +1,6 @@
 package com.github.database.rider.addon;
 
+import com.github.database.rider.addon.config.DBUnitConfiguration;
 import com.github.database.rider.addon.model.Tweet;
 import com.github.database.rider.addon.model.User;
 import com.github.database.rider.addon.ui.DBUnitExportCommand;
@@ -59,6 +60,9 @@ public class DBUnitExportCommandTest {
 
     @Inject
     private UITestHarness uiTestHarness;
+    
+    @Inject
+    DBUnitConfiguration dbUnitConfiguration;
 
     private static Server server;
 
@@ -87,6 +91,21 @@ public class DBUnitExportCommandTest {
         user2.setName("user2");
         em().persist(user2);
         tx().commit();
+    }
+
+
+    @Test
+    public void shouldNotExportDatasetsWithoutDatabaseUrl() throws TimeoutException {
+    	try{
+    		dbUnitConfiguration.set(null, null, null); //emulates a user calling export command without setup
+    	}catch (Exception e) {
+			// intentional
+		}
+    	Result result  = shellTest.execute("dbunit-export --name test",
+                20, TimeUnit.SECONDS);
+
+        assertThat(result.getMessage(),
+                containsString("Use the 'setup' command to provide a valid database URL in order to use this plugin."));
     }
 
     
