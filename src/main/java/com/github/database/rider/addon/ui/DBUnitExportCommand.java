@@ -86,7 +86,6 @@ public class DBUnitExportCommand extends AbstractUICommand {
     public void initializeUI(UIBuilder builder) throws Exception {
         format.setDefaultValue(DataSetFormat.YML);
         format.setValueChoices(Arrays.asList(DataSetFormat.values()));
-        //includeTables.setValue(new ArrayList<String>());
 
         includeTables.setValueChoices(dbunitConfiguration.getTableNames());
 
