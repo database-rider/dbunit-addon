@@ -120,7 +120,7 @@ public class DBUnitConfiguration {
 			Class.forName(driverClass);
 		}
 		if(url == null || "".equals(url.trim())){
-			throw new RuntimeException("Use the 'setup' command to provide a valid database URL in order to use to plugin.");
+			throw new RuntimeException("Use the 'setup' command to provide a valid database URL in order to use this plugin.");
 		}
 		return DriverManager.getConnection(url, user, password);
 	}

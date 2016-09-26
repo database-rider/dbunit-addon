@@ -6,6 +6,7 @@ import com.github.database.rider.addon.ui.DBUnitExportCommand;
 import org.h2.tools.Server;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.junit.InSequence;
 import org.jboss.forge.addon.shell.test.ShellTest;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.result.Failed;
@@ -89,14 +90,6 @@ public class DBUnitExportCommandTest {
     }
 
     
-    @Test
-    public void shouldNotExportDatasetsWithoutDatabaseUrl() throws TimeoutException {
-    	Result result  = shellTest.execute("dbunit-export --name test",
-                20, TimeUnit.SECONDS);
-
-        assertThat(result.getMessage(),
-                containsString("Use the 'setup' command to provide a valid database URL in order to use to plugin."));
-    }
 
     @Test
     public void shouldExportYMLDataset() throws Exception {
@@ -253,7 +246,7 @@ public class DBUnitExportCommandTest {
     }
 
     @Test
-    public void shouldExportTweetAndUserTablesUsingQueryFiltersWithIncludes() throws Exception {
+    public void shouldExportTweetAndUserTablesUsingQueriesAndIncludes() throws Exception {
         shellTest.clearScreen();
         Result result = shellTest.execute("dbunit-setup --url " +
                         "'jdbc:h2:tcp://localhost:9092/mem:test;DB_CLOSE_DELAY=-1;MODE=MySQL' --user sa",
