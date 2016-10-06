@@ -130,15 +130,14 @@ public class DBUnitExportCommandTest {
         File generatedDataSet = new File(DATASET_HOME.toAbsolutePath().toString() + "/test.yml");
         assertThat(generatedDataSet.exists(), is(true));
         assertThat(asUTF8String(new FileInputStream(generatedDataSet)),
-                containsString("tweet:" + NEW_LINE +
-                        "  - id: \"2\"" + NEW_LINE +
-                        "    content: \"tweet 1\"" + NEW_LINE +
-                        "    date: \"" + TODAY + "\"" + NEW_LINE +
-                        "    likes: 10" + NEW_LINE +
-                        "    user_id: " + NEW_LINE +
-                        "  - id: \"3\"" + NEW_LINE +
-                        "    content: \"tweet 2\"" + NEW_LINE +
-                        "    date: \"" + "" + TODAY + "\"" + NEW_LINE +
+                containsString("tweet:"+NEW_LINE +
+                        "  - id: \"2\""+NEW_LINE +
+                        "    content: \"tweet 1\""+NEW_LINE +
+                        "    date: \"" + TODAY +"\""+NEW_LINE +
+                        "    likes: 10"+NEW_LINE +
+                        "  - id: \"3\""+NEW_LINE +
+                        "    content: \"tweet 2\""+NEW_LINE +
+                        "    date: \"2016-10-05\""+NEW_LINE +
                         "    likes: 0"));
 
         assertThat(asUTF8String(new FileInputStream(generatedDataSet)),
@@ -257,9 +256,8 @@ public class DBUnitExportCommandTest {
                     is(equalTo("tweet:" + NEW_LINE +
                             "  - id: \"2\"" + NEW_LINE +
                             "    content: \"tweet 1\"" + NEW_LINE +
-                            "    date: \""  + TODAY + "\"" + NEW_LINE +
+                            "    date: \""  + TODAY + "\"" +NEW_LINE +
                             "    likes: 10" + NEW_LINE +
-                            "    user_id: " + NEW_LINE +
                             "" + NEW_LINE)));
         }
     }
@@ -296,8 +294,7 @@ public class DBUnitExportCommandTest {
                             "  - id: \"2\""+NEW_LINE +
                             "    content: \"tweet 1\""+NEW_LINE +
                             "    date: \""+TODAY+"\""+NEW_LINE +
-                            "    likes: 10"+NEW_LINE +
-                            "    user_id: "+NEW_LINE+NEW_LINE)));
+                            "    likes: 10"+NEW_LINE+NEW_LINE)));
         }
 
 
