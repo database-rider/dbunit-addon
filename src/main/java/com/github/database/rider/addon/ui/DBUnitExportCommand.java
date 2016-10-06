@@ -1,9 +1,8 @@
 package com.github.database.rider.addon.ui;
 
 import com.github.database.rider.addon.config.DBUnitConfiguration;
-import com.github.database.rider.addon.event.ConnectionChangeEvent;
 import com.github.database.rider.core.api.dataset.DataSetFormat;
-import com.github.database.rider.core.api.expoter.DataSetExportConfig;
+import com.github.database.rider.core.api.exporter.DataSetExportConfig;
 import com.github.database.rider.core.exporter.DataSetExporter;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.resource.DirectoryResource;
@@ -24,7 +23,6 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import java.io.File;
 import java.sql.Connection;
