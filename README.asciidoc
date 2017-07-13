@@ -15,6 +15,10 @@ Use install addon from git command:
 addon-install-from-git --url https://github.com/database-rider/dbunit-addon.git
 ----
 
+Or install from Forge catalog:
+
+image::install-from-catalog.png["Install from catalog"]
+
 === Usage
 
 . Setup database connection
@@ -33,5 +37,4 @@ image::export_cmd.png["Export command"]
 * `Output dir`: directory to generate dataset.
 * `Name`: name of resulting dataset. Format can be ommited in dataset name.
 
-=== Demo
-TODO 
+ 
