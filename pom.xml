@@ -70,16 +70,6 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.jboss.forge.furnace.test</groupId>
-			<artifactId>furnace-test-harness</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.forge.furnace.test</groupId>
-			<artifactId>arquillian-furnace-classpath</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.jboss.forge.addon</groupId>
 			<artifactId>ui-test-harness</artifactId>
 			<classifier>forge-addon</classifier>
@@ -113,7 +103,9 @@
 			<artifactId>postgresql</artifactId>
 			<version>9.4.1211.jre7</version>
 		</dependency>
-		<dependency>
+		<!--
+		
+		 <dependency>
 			<groupId>com.hynnet</groupId>
 			<artifactId>oracle-driver-ojdbc</artifactId>
 			<version>12.1.0.2</version>
@@ -123,8 +115,8 @@
 					<artifactId>org.slf4j</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
-
+		</dependency> -->
+		
 		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
 			<artifactId>eclipselink</artifactId>
