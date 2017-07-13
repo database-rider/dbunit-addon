@@ -137,7 +137,7 @@ public class DBUnitExportCommandTest {
                         "    likes: 10"+NEW_LINE +
                         "  - id: \"3\""+NEW_LINE +
                         "    content: \"tweet 2\""+NEW_LINE +
-                        "    date: \"2016-10-05\""+NEW_LINE +
+                        "    date: \"" + TODAY + "\""+NEW_LINE +
                         "    likes: 0"));
 
         assertThat(asUTF8String(new FileInputStream(generatedDataSet)),
