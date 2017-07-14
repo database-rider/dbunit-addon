@@ -38,7 +38,7 @@ image::export_cmd.png["Export command"]
 * `Name`: name of resulting dataset. Format can be ommited in dataset name.
 
 === Oracle database
-As oracle jdbc driver is not on maven central the plugin doesn't come with oracle jdbc driver on classpath.
+As oracle jdbc driver is not on maven central the plugin doesn't come with it on classpath hence it cannot connect to Oracle DB by default.
 
 In order to make the plugin work with oracle will you need to http://www.oracle.com/technetwork/database/features/jdbc/index-091264.html[download the jdbc driver] and copy to `dbunit-addon folder` located at *user_home/.forge/addons/com-github-database-rider-addon-dbunit-addon-1-0-0-SNAPSHOT* 
 
