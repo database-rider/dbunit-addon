@@ -238,4 +238,37 @@
 		</profile>
 
 	</profiles>
+
+	<name>dbunit-addon</name>
+	<url>https://github.com/database-rider/dbunit-addon</url>
+
+	<description>
+		DBUnit dataset generation via JBoss Forge
+	</description>
+
+	<developers>
+		<developer>
+			<name>Rafael M. Pestano</name>
+			<email>rmpestanoATgmail.com</email>
+		</developer>
+	</developers>
+
+	<licenses>
+		<license>
+			<name>Apache 2</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+			<comments>A business-friendly OSS license</comments>
+		</license>
+	</licenses>
+	<scm>
+		<connection>scm:git:https://github.com/database-rider/dbunit-addon</connection>
+		<developerConnection>scm:git:git@github.com:database-rider/dbunit-addon</developerConnection>
+		<url>https://github.com/database-rider/dbunit-addon</url>
+	</scm>
+
+	<ciManagement>
+		<system>tranvis-ci.org</system>
+		<url>https://travis-ci.org/database-rider/dbunit-addon</url>
+	</ciManagement>
 </project>
