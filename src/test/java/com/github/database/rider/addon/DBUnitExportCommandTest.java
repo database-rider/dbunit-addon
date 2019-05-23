@@ -4,6 +4,7 @@ import com.github.database.rider.addon.config.DBUnitConfiguration;
 import com.github.database.rider.addon.model.Tweet;
 import com.github.database.rider.addon.model.User;
 import com.github.database.rider.addon.ui.DBUnitExportCommand;
+import com.github.database.rider.core.api.exporter.BuilderType;
 import org.h2.tools.Server;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -67,9 +68,9 @@ public class DBUnitExportCommandTest {
     private static Server server;
 
     @BeforeClass
-    public static void initDB() throws InterruptedException, SQLException {
+    public static void initDB() throws SQLException {
         server = Server.createTcpServer();
-        //we nned to start H2 server because test and forge plugin runs on different JVM
+        //we need to start H2 server because test and forge plugin runs on different JVM
         server.start();
         Tweet t1 = new Tweet();
         t1.setContent("tweet 1");
@@ -146,6 +147,127 @@ public class DBUnitExportCommandTest {
                         "    name: \"rmpestano\"" + NEW_LINE +
                         "  - id: 4" + NEW_LINE +
                         "    name: \"user2\"" + NEW_LINE));
+    }
+
+    @Test
+    public void shouldExportYMLAndDatasetBuilderInDefaultSyntax() throws Exception {
+        shellTest.clearScreen();
+        Result result = shellTest.execute("dbunit-setup --url " +
+                        "'jdbc:h2:tcp://localhost:9092/mem:test;DB_CLOSE_DELAY=-1;MODE=MySQL' --user sa",
+                10, TimeUnit.SECONDS);
+        assertThat(result, not(instanceOf(Failed.class)));
+        assertThat(result.getMessage(),
+                is(equalTo("DBUnit setup completed successfully!")));
+
+        result = shellTest.execute("dbunit-export --name test --builder-type "+ BuilderType.DEFAULT.name(),
+                20, TimeUnit.SECONDS);
+
+        assertThat(result.getMessage(),
+                containsString("DataSet exported successfully at "));
+
+
+        File generatedDataSet = new File(DATASET_HOME.toAbsolutePath().toString() + "/test.yml");
+        assertThat(generatedDataSet.exists(), is(true));
+        assertThat(asUTF8String(new FileInputStream(generatedDataSet)),
+                containsString("tweet:"+NEW_LINE +
+                        "  - id: \"2\""+NEW_LINE +
+                        "    content: \"tweet 1\""+NEW_LINE +
+                        "    date: \"" + TODAY +"\""+NEW_LINE +
+                        "    likes: 10"+NEW_LINE +
+                        "  - id: \"3\""+NEW_LINE +
+                        "    content: \"tweet 2\""+NEW_LINE +
+                        "    date: \"" + TODAY + "\""+NEW_LINE +
+                        "    likes: 0"));
+
+        assertThat(asUTF8String(new FileInputStream(generatedDataSet)),
+                containsString("user:" + NEW_LINE +
+                        "  - id: 1" + NEW_LINE +
+                        "    name: \"rmpestano\"" + NEW_LINE +
+                        "  - id: 4" + NEW_LINE +
+                        "    name: \"user2\"" + NEW_LINE));
+
+        File generatedDataSetBuilder = new File(DATASET_HOME.toAbsolutePath().toString() + "/test.java");
+        assertThat(generatedDataSetBuilder.exists(), is(true));
+        assertThat(asUTF8String(new FileInputStream(generatedDataSetBuilder)), containsString("DataSetBuilder builder = new DataSetBuilder();" + NEW_LINE +
+                "IDataSet dataSet = builder" + NEW_LINE +
+                "    .table(\"sequence\")" + NEW_LINE +
+                "    .row()" + NEW_LINE +
+                "        .column(\"seq_name\", \"SEQ_GEN\")" + NEW_LINE +
+                "        .column(\"seq_count\", 50)" + NEW_LINE +
+                "    .table(\"tweet\")" + NEW_LINE +
+                "    .row()" + NEW_LINE +
+                "        .column(\"id\", \"2\")" + NEW_LINE +
+                "        .column(\"content\", \"tweet 1\")" + NEW_LINE +
+                "        .column(\"date\", \"2019-05-22\")" + NEW_LINE +
+                "        .column(\"likes\", 10)" + NEW_LINE +
+                "        .column(\"user_id\", null)" + NEW_LINE +
+                "    .row()" + NEW_LINE +
+                "        .column(\"id\", \"3\")" + NEW_LINE +
+                "        .column(\"content\", \"tweet 2\")" + NEW_LINE +
+                "        .column(\"date\", \"2019-05-22\")" + NEW_LINE +
+                "        .column(\"likes\", 0)" + NEW_LINE +
+                "        .column(\"user_id\", null)" + NEW_LINE +
+                "    .table(\"user\")" + NEW_LINE +
+                "    .row()" + NEW_LINE +
+                "        .column(\"id\", 1)" + NEW_LINE +
+                "        .column(\"name\", \"rmpestano\")" + NEW_LINE +
+                "    .row()" + NEW_LINE +
+                "        .column(\"id\", 4)" + NEW_LINE +
+                "        .column(\"name\", \"user2\").build();"));
+    }
+
+    @Test
+    public void shouldExportYMLAndDatasetBuilderInColumnValuesSyntax() throws Exception {
+        shellTest.clearScreen();
+        Result result = shellTest.execute("dbunit-setup --url " +
+                        "'jdbc:h2:tcp://localhost:9092/mem:test;DB_CLOSE_DELAY=-1;MODE=MySQL' --user sa",
+                10, TimeUnit.SECONDS);
+        assertThat(result, not(instanceOf(Failed.class)));
+        assertThat(result.getMessage(),
+                is(equalTo("DBUnit setup completed successfully!")));
+
+        result = shellTest.execute("dbunit-export --name test --builder-type "+ BuilderType.COLUMNS_VALUES.name(),
+                20, TimeUnit.SECONDS);
+
+        assertThat(result.getMessage(),
+                containsString("DataSet exported successfully at "));
+
+
+        File generatedDataSet = new File(DATASET_HOME.toAbsolutePath().toString() + "/test.yml");
+        assertThat(generatedDataSet.exists(), is(true));
+        assertThat(asUTF8String(new FileInputStream(generatedDataSet)),
+                containsString("tweet:"+NEW_LINE +
+                        "  - id: \"2\""+NEW_LINE +
+                        "    content: \"tweet 1\""+NEW_LINE +
+                        "    date: \"" + TODAY +"\""+NEW_LINE +
+                        "    likes: 10"+NEW_LINE +
+                        "  - id: \"3\""+NEW_LINE +
+                        "    content: \"tweet 2\""+NEW_LINE +
+                        "    date: \"" + TODAY + "\""+NEW_LINE +
+                        "    likes: 0"));
+
+        assertThat(asUTF8String(new FileInputStream(generatedDataSet)),
+                containsString("user:" + NEW_LINE +
+                        "  - id: 1" + NEW_LINE +
+                        "    name: \"rmpestano\"" + NEW_LINE +
+                        "  - id: 4" + NEW_LINE +
+                        "    name: \"user2\"" + NEW_LINE));
+
+        File generatedDataSetBuilder = new File(DATASET_HOME.toAbsolutePath().toString() + "/test.java");
+        assertThat(generatedDataSetBuilder.exists(), is(true));
+        assertThat(asUTF8String(new FileInputStream(generatedDataSetBuilder)), containsString("DataSetBuilder builder = new DataSetBuilder();" + NEW_LINE +
+                "IDataSet dataSet = builder" + NEW_LINE +
+                "    .table(\"sequence\")" + NEW_LINE +
+                "        .columns(\"seq_name\", \"seq_count\")" + NEW_LINE +
+                "        .values(\"SEQ_GEN\", 50)" + NEW_LINE +
+                "    .table(\"tweet\")" + NEW_LINE +
+                "        .columns(\"id\", \"content\", \"date\", \"likes\", \"user_id\")" + NEW_LINE +
+                "        .values(\"2\", \"tweet 1\", \"2019-05-22\", 10, null)" + NEW_LINE +
+                "        .values(\"3\", \"tweet 2\", \"2019-05-22\", 0, null)" + NEW_LINE +
+                "    .table(\"user\")" + NEW_LINE +
+                "        .columns(\"id\", \"name\")" + NEW_LINE +
+                "        .values(1, \"rmpestano\")" + NEW_LINE +
+                "        .values(4, \"user2\").build();"));
     }
 
     @Test

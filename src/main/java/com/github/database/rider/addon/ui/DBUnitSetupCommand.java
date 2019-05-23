@@ -69,7 +69,7 @@ public class DBUnitSetupCommand extends AbstractUICommand {
 
 
     @Override
-    public Result execute(UIExecutionContext context) throws Exception {
+    public Result execute(UIExecutionContext context) {
         try {
             dbunitConfiguration.set(url.getValue(), user.getValue(), password.getValue());
             connectionChangeEvent.fire(new ConnectionChangeEvent());

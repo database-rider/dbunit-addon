@@ -2,6 +2,7 @@ package com.github.database.rider.addon.ui;
 
 import com.github.database.rider.addon.config.DBUnitConfiguration;
 import com.github.database.rider.core.api.dataset.DataSetFormat;
+import com.github.database.rider.core.api.exporter.BuilderType;
 import com.github.database.rider.core.api.exporter.DataSetExportConfig;
 import com.github.database.rider.core.exporter.DataSetExporter;
 import org.jboss.forge.addon.facets.FacetFactory;
@@ -70,8 +71,12 @@ public class DBUnitExportCommand extends AbstractUICommand {
     private UIInput<DirectoryResource> outputDir;
 
     @Inject
-    @WithAttributes(label = "Name", description = "Name of generated dataset. Defauts to 'dataset-HH:mm:ss'")
+    @WithAttributes(label = "Name", description = "Name of generated dataset. Defaults to 'dataset-HH:mm:ss'")
     private UIInput<String> name;
+
+    @Inject
+    @WithAttributes(label = "Builder type", description = "When builder type is different then NONE, the addon will (also) export the dataset in DataSetBuilder format.", type = InputType.DROPDOWN)
+    private UISelectOne<BuilderType> builderType;
 
     @Override
     public UICommandMetadata getMetadata(UIContext context) {
@@ -79,14 +84,13 @@ public class DBUnitExportCommand extends AbstractUICommand {
                 category(Categories.create("DBUnit")).description("Export database tables as DBUnit datasets.");
     }
 
-
     @Override
-    public void initializeUI(UIBuilder builder) throws Exception {
+    public void initializeUI(UIBuilder builder) {
         format.setDefaultValue(DataSetFormat.YML);
         format.setValueChoices(Arrays.asList(DataSetFormat.values()));
-
+        builderType.setDefaultValue(BuilderType.NONE);
+        builderType.setValueChoices(Arrays.asList(BuilderType.values()));
         includeTables.setValueChoices(dbunitConfiguration.getTableNames());
-
         dependentTables.setDefaultValue(Boolean.TRUE);
 
         builder.add(format).add(includeTables).add(dependentTables).add(queryList);
@@ -97,24 +101,20 @@ public class DBUnitExportCommand extends AbstractUICommand {
             outputDir.setDefaultValue(resourceFactory.create(DirectoryResource.class, new File(System.getProperty("user.home") + "/generated-datasets").getAbsoluteFile()));
         }
 
-
-
         outputDir.addValueChangeListener(valueChangeEvent -> {
             if (valueChangeEvent.getNewValue() != null) {
                 lastSelectedDir = (DirectoryResource) valueChangeEvent.getNewValue();
             }
         });
         builder.add(outputDir);
-
+        builder.add(builderType);
         name.setValue("dataset-"+sdf.format(new Date()).replaceAll(":","")+"."+format.getValue().toString().toLowerCase());
-
         format.addValueChangeListener(valueChangeEvent -> {
             String newName = name.getValue().substring(0, name.getValue().
                     contains(".") ? name.getValue().lastIndexOf(".") : name.getValue().length());
 
             name.setValue(newName + "." + valueChangeEvent.getNewValue().toString().toLowerCase());
         });
-
 
         builder.add(name);
     }
@@ -141,13 +141,11 @@ public class DBUnitExportCommand extends AbstractUICommand {
             }
 
             output.append(fileName);
-
-
             DataSetExportConfig dataSetExportConfig = new DataSetExportConfig().
-                        dataSetFormat(format.getValue()).
+                    dataSetFormat(format.getValue()).
+                    builderType(builderType.getValue()).
                     dependentTables(dependentTables.getValue()).
                     outputFileName(output.toString());
-
 
             Iterator<String> queryIterator = queryList.getValue().iterator();
             if(queryIterator.hasNext()){
